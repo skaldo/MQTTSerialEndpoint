@@ -18,7 +18,13 @@ MQTT URIs:
         {bus, address, command}
  */
 
-var Client = function(interop){
+/**
+ * Class used to subscribe to the MQTT channel and pass the appropriate requests
+ * to the interop as well as pass the received data to the MQTT broker.
+ * @param interop
+ * @constructor
+ */
+var MQTTInterface = function(interop){
     var self = this;
 
     self._interop = interop;
@@ -67,9 +73,14 @@ var Client = function(interop){
     })
 };
 
-util.inherits(Client, EventEmitter);
+util.inherits(MQTTInterface, EventEmitter);
 
-Client.prototype.onSchedule = function(topic, data){
+/**
+ * Callback called when a schedule command is received bz the MQTT Client.
+ * @param topic
+ * @param data
+ */
+MQTTInterface.prototype.onSchedule = function(topic, data){
     var self = this,
         identifier,
         address,
@@ -82,7 +93,12 @@ Client.prototype.onSchedule = function(topic, data){
     self._client.publish('MLUs/'+MLUID+'/ack/schedule/'+topic[0]+'/'+topic[1], JSON.stringify(success));
 };
 
-Client.prototype.onSend = function(topic, data){
+/**
+ * Callback called when a send command is received bz the MQTT Client.
+ * @param topic
+ * @param data
+ */
+MQTTInterface.prototype.onSend = function(topic, data){
     var self = this,
         identifier,
         address;
@@ -93,4 +109,4 @@ Client.prototype.onSend = function(topic, data){
     self._interop.send(identifier, address, data.data);
 };
 
-module.exports = Client;
+module.exports = MQTTInterface;

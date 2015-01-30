@@ -3,10 +3,15 @@
  */
 
 /*
-    EXAMPLE USAGE:
-     var Interop = require("./interop.js");
+Class used as an API providing an abstraction layer between the application and the low level bus systems.
+It does implement a scheduling mechanism, see example usage.
 
-     var interfacesSettings = [{
+EXAMPLE USAGE:
+    var Interop = require("./interop.js");
+
+    // Settings of the interfaces. The protocol names have to correspond with
+    // the protocols defined in the protocols folder.
+    var interfacesSettings = [{
      identifier: 'tbus1', //used in the MQTT
      protocol: 'tbus',
      sp: '/dev/tty.usbserial-AH000KNV',
@@ -17,17 +22,19 @@
      stopBits: 1,
      flowControl: false,
      timeout: 1000
-     }
-     }];
+    }];
 
-     var interop = new Interop(interfacesSettings);
+    var interop = new Interop(interfacesSettings);
 
-     interop.on("data", function(identifier, protocol, time, from, data){
-     console.log(identifier, protocol, time, from, data);
-     });
+    interop.on("data", function(identifier, protocol, time, from, data){
+    console.log(identifier, protocol, time, from, data);
+    });
 
-     //interop.send('tbus1', [0x07, 0x00, 0x00, 0x01], [0x01]);
-     interop.schedule("* * * * * *", 'tbus1', [0x07, 0x00, 0x00, 0x01], [0x01]);
+    // Send single command to the bus
+    interop.send('tbus1', [0x07, 0x00, 0x00, 0x01], [0x01]);
+    //Cron-like scheduling of the recurrent commands
+    interop.schedule("* * * * * *", 'tbus1', [0x07, 0x00, 0x00, 0x01], [0x01]);
+
 */
 
 var util = require('util');
@@ -36,6 +43,11 @@ var EventEmitter = require('events').EventEmitter;
 
 var Tasks = require('./tasks/tasks.js');
 
+/**
+ * Class constructor, initializes the interfaces.
+ * @param interfacesSettings
+ * @constructor
+ */
 var Interop = function(interfacesSettings){
     var self = this,
         protocols;
@@ -53,13 +65,18 @@ var Interop = function(interfacesSettings){
     }
 
     // initialization of the interfaces from the config
-    for(var i=0; i<interfacesSettings.length; i++){
+    for(i=0; i<interfacesSettings.length; i++){
         self.addInterface(interfacesSettings[i]);
     }
 };
 
 util.inherits(Interop, EventEmitter);
 
+/**
+ * Adds new interface and does all the necessary setup.
+ * @param interfaceSettings
+ * @returns {boolean}
+ */
 Interop.prototype.addInterface = function(interfaceSettings){
     var self = this;
 
@@ -80,6 +97,13 @@ Interop.prototype.addInterface = function(interfaceSettings){
     return true;
 };
 
+/**
+ * Send method used to send the data to the physical device attached on the bus.
+ * @param identifier
+ * @param address
+ * @param data
+ * @returns {boolean}
+ */
 Interop.prototype.send = function(identifier, address, data){
     var self = this;
 
@@ -91,6 +115,14 @@ Interop.prototype.send = function(identifier, address, data){
     return true;
 };
 
+/**
+ * Schedules recurring command transmission.
+ * @param cronString
+ * @param identifier
+ * @param address
+ * @param data
+ * @returns {boolean}
+ */
 Interop.prototype.schedule = function(cronString, identifier, address, data){
     var self = this;
 
@@ -102,10 +134,18 @@ Interop.prototype.schedule = function(cronString, identifier, address, data){
     return true;
 };
 
+/**
+ * Gets the identifiers of the interfaces.
+ * @returns {Array}
+ */
 Interop.prototype.getIdentifiers = function(){
-    var selft = this,
+    var self = this,
         identifiers = [];
-    for(var k in self._interfaces) identifiers.push(k);
+
+    for(var k in self._interfaces){
+        identifiers.push(k);
+    }
+
     return identifiers;
 };
 
