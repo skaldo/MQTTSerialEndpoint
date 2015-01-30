@@ -1,0 +1,17 @@
+{
+  "interfaces": [
+    {
+      "identifier": "tbus1",
+      "protocol": "tbus",
+      "sp": "/dev/tty.usbserial-AH000KNV",
+      "spConfig": {
+        "baudrate": 9600,
+        "dataBits": 8,
+        "parity": "none",
+        "stopBits": 1,
+        "flowControl": false,
+        "timeout": 1000
+      }
+    }
+  ]
+}

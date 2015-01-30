@@ -1,0 +1,16 @@
+{
+  "name": "MQTTSerialEndpoint",
+  "version": "1.0.0",
+  "description": "Sends scheduled command to various interfaces and broadcasts the responses.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cron": "^1.0.6",
+    "mqtt": "^1.0.6",
+    "serialport": "^1.4.10"
+  }
+}
