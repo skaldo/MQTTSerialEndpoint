@@ -29,7 +29,7 @@ var TBus = function(sp, options) {
 
         frame = protocol.parse(data);
         if(!frame.valid){
-            debug("Received invalid T-Bus frame");
+            console.log("Received invalid T-Bus frame");
             return;
         }
 
