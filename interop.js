@@ -41,7 +41,7 @@ var util = require('util');
 var fs = require('fs');
 var EventEmitter = require('events').EventEmitter;
 
-var Tasks = require('./tasks/tasks.js');
+var Tasks = require(__dirname + '/tasks/tasks.js');
 
 /**
  * Class constructor, initializes the interfaces.
@@ -55,13 +55,13 @@ var Interop = function(interfacesSettings){
     self._interfaces = {};
     self._tasks = new Tasks();
 
-    protocols = fs.readdirSync('./protocols');
+    protocols = fs.readdirSync(__dirname + '/protocols');
 
     // TODO: dynamic interfaces loading
     self._availableInterfaces = {};
 
     for(var i=0; i<protocols.length; i++){
-        self._availableInterfaces[protocols[i]] = require('./protocols/'+protocols[i]+'/'+protocols[i]+'.js');
+        self._availableInterfaces[protocols[i]] = require(__dirname + '/protocols/'+protocols[i]+'/'+protocols[i]+'.js');
     }
 
     // initialization of the interfaces from the config

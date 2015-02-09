@@ -3,7 +3,7 @@
     {
       "identifier": "tbus1",
       "protocol": "tbus",
-      "sp": "/dev/tty.usbserial-AH000KNV",
+      "sp": "COM3",
       "spConfig": {
         "baudrate": 9600,
         "dataBits": 8,

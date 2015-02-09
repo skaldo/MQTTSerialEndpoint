@@ -8,7 +8,6 @@
  tasks.schedule("10,20,30,40,50 * * * * *", [0x07, 0x00, 0x00, 0x02], [0x01]);
  */
 
-var debug = require('debug');
 var CronJob = require('cron').CronJob;
 
 /**

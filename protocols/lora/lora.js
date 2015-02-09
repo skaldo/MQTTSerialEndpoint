@@ -4,12 +4,11 @@
 
 var util = require('util');
 var EventEmitter = require('events').EventEmitter;
-var debug = require('debug');
 
 var protocol = require("./protocol.js");
 var SPQueue = require("./../../utils/serialport-queue");
 
-var address = new Buffer([0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]);
+//var address = new Buffer([0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]);
 
 var LoRa = function(sp, options) {
     var self = this;

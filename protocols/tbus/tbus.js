@@ -4,7 +4,6 @@
 
 var util = require('util');
 var EventEmitter = require('events').EventEmitter;
-var debug = require('debug');
 
 var protocol = require("./protocol.js");
 var SPQueue = require("./../../utils/serialport-queue.js");
@@ -13,6 +12,8 @@ var address = new Buffer([0x00, 0x00, 0x00, 0x00]);
 
 var TBus = function(sp, options) {
     var self = this;
+
+    options.parser = require(__dirname + '/parser.js')();
 
     self.sp = sp;
     self._address = address;
