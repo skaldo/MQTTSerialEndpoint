@@ -65,8 +65,10 @@ var Interop = function(interfacesSettings){
     }
 
     // initialization of the interfaces from the config
-    for(i=0; i<interfacesSettings.length; i++){
-        self.addInterface(interfacesSettings[i]);
+    for (var protocolName in interfacesSettings){
+        for(var i=0;i<interfacesSettings[protocolName].length; i++){
+            self.addInterface(interfacesSettings[protocolName][i], i, protocolName);
+        }
     }
 };
 
@@ -75,23 +77,25 @@ util.inherits(Interop, EventEmitter);
 /**
  * Adds new interface and does all the necessary setup.
  * @param interfaceSettings
+ * @param id
+ * @param protocolName
  * @returns {boolean}
  */
-Interop.prototype.addInterface = function(interfaceSettings){
+Interop.prototype.addInterface = function(interfaceSettings, id, protocolName){
     var self = this;
 
-    if(self._interfaces[interfaceSettings.identifier]){
-        console.error("The "+interfaceSettings.identifier+" identifier is not unique!");
-        return false;
+    if(!self._interfaces[protocolName]){
+        self._interfaces[protocolName] = [];
     }
-    self._interfaces[interfaceSettings.identifier] = new self._availableInterfaces[interfaceSettings.protocol](
+
+    self._interfaces[protocolName][id] = new self._availableInterfaces[protocolName](
         interfaceSettings.sp,
         interfaceSettings.spConfig
     );
 
     // register event handler
-    self._interfaces[interfaceSettings.identifier].on("frame", function(frame, received){
-        self.emit("data", interfaceSettings.identifier, interfaceSettings.protocol, received, frame.sender, frame.data);
+    self._interfaces[protocolName][id].on("frame", function(frame, received){
+        self.emit("data", id, protocolName, received, frame.sender, frame.data);
     });
 
     return true;
@@ -99,54 +103,53 @@ Interop.prototype.addInterface = function(interfaceSettings){
 
 /**
  * Send method used to send the data to the physical device attached on the bus.
- * @param identifier
+ * @param id
  * @param address
  * @param data
  * @returns {boolean}
  */
-Interop.prototype.send = function(identifier, address, data){
+Interop.prototype.send = function(protocolName, id, address, data){
     var self = this;
 
-    if(!self._interfaces[identifier]){
-        console.error("The interface with identifier "+identifier+" does not exist");
+    id = parseInt(id);
+
+    if(!self._interfaces[protocolName][id]){
+        console.error("The interface with name "+protocolName+" and id "+id+" does not exist");
         return false;
     }
-    self._interfaces[identifier].send(address, data);
+    self._interfaces[protocolName][id].send(address, data);
     return true;
 };
 
 /**
  * Schedules recurring command transmission.
  * @param cronString
- * @param identifier
+ * @param id
  * @param address
  * @param data
  * @returns {boolean}
  */
-Interop.prototype.schedule = function(cronString, identifier, address, data){
+Interop.prototype.schedule = function(cronString, protocolName, id, address, data){
     var self = this;
 
-    if(!self._interfaces[identifier]){
-        console.error("The interface with identifier "+identifier+" does not exist");
+    id = parseInt(id);
+
+    if(!self._interfaces[protocolName][id]){
+        console.error("The interface with name "+protocolName+" and id "+id+" does not exist");
         return false;
     }
-    self._tasks.schedule(cronString, self._interfaces[identifier], address, data);
+    self._tasks.schedule(cronString, self._interfaces[protocolName][id], address, data);
     return true;
 };
 
 /**
- * Gets the identifiers of the interfaces.
+ * Gets the ids of the interfaces.
  * @returns {Array}
  */
-Interop.prototype.getIdentifiers = function(){
-    var self = this,
-        identifiers = [];
+Interop.prototype.getInterfaces = function(){
+    var self = this;
 
-    for(var k in self._interfaces){
-        identifiers.push(k);
-    }
-
-    return identifiers;
+    return self._interfaces;
 };
 
 module.exports = Interop;

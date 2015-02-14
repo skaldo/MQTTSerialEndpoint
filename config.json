@@ -1,17 +1,17 @@
 {
-  "interfaces": [
-    {
-      "identifier": "tbus1",
-      "protocol": "tbus",
-      "sp": "COM3",
-      "spConfig": {
-        "baudrate": 9600,
-        "dataBits": 8,
-        "parity": "none",
-        "stopBits": 1,
-        "flowControl": false,
-        "timeout": 1000
+  "interfaces": {
+    "tbus": [
+      {
+        "sp": "COM3",
+        "spConfig": {
+          "baudrate": 9600,
+          "dataBits": 8,
+          "parity": "none",
+          "stopBits": 1,
+          "flowControl": false,
+          "timeout": 1000
+        }
       }
-    }
-  ]
+    ]
+  }
 }
